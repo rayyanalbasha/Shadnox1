@@ -1,0 +1,64 @@
+{
+  "name": "private-screen",
+  "version": "1.0.3",
+  "description": "A simple desktop screen-dimming privacy overlay",
+  "main": "main.js",
+  "author": "Private Screen",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win nsis --x64",
+    "build:mac": "electron-builder --mac dmg --universal"
+  },
+  "devDependencies": {
+    "electron": "^39.0.0",
+    "electron-builder": "^26.0.0"
+  },
+  "build": {
+    "appId": "com.privatescreen.app",
+    "productName": "Private Screen",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "style.css",
+      "renderer.js",
+      "overlay.html",
+      "tray.png"
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "PrivateScreen-Windows-Setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "category": "public.app-category.utilities",
+      "darkModeSupport": true,
+      "artifactName": "PrivateScreen-macOS-Universal.${ext}"
+    }
+  }
+}

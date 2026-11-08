@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Private Screen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">P</div>
+        <div>
+          <div class="brand-name">PRIVATE SCREEN</div>
+          <div class="brand-subtitle">Your screen, your privacy</div>
+        </div>
+      </div>
+      <span class="version">v1.0.3</span>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow"><span class="live-dot"></span> DESKTOP PROTECTION</div>
+      <h1>Take control of<br><span>your screen.</span></h1>
+      <p class="intro">Add a dark overlay to make on-screen content less visible to people nearby.</p>
+    </section>
+
+    <section class="control-card">
+      <div class="control-heading">
+        <div>
+          <div class="card-label">SCREEN OVERLAY</div>
+          <div class="status" id="statusText">Currently off</div>
+        </div>
+        <span class="status-pill" id="statusPill">OFF</span>
+      </div>
+
+      <button class="toggle-button" id="toggleButton" type="button">
+        <span class="toggle-symbol" id="toggleSymbol">◉</span>
+        <span id="toggleLabel">Turn on overlay</span>
+      </button>
+
+      <div class="strength-heading">
+        <label for="strengthSlider">Privacy strength</label>
+        <strong><span id="strengthValue">45</span>%</strong>
+      </div>
+      <input id="strengthSlider" type="range" min="0" max="90" value="45">
+      <div class="range-labels"><span>Subtle</span><span>Strong</span></div>
+    </section>
+
+    <section class="shortcut-card">
+      <div class="shortcut-icon">⌨</div>
+      <div class="shortcut-copy">
+        <strong>Quick toggle</strong>
+        <span id="hotkeyHint">Use your keyboard shortcut anytime</span>
+      </div>
+      <kbd id="hotkeyLabel">CTRL + SHIFT + P</kbd>
+      <button class="hotkey-button" id="hotkeyButton" type="button">Change</button>
+    </section>
+    <div class="hotkey-actions">
+      <span id="hotkeyError" class="hotkey-error"></span>
+      <button class="hotkey-reset" id="hotkeyReset" type="button">Reset to default</button>
+    </div>
+
+    <label class="background-card">
+      <input type="checkbox" id="backgroundCheck" checked>
+      <span>
+        <strong>Keep running in the background</strong>
+        <small>When checked, closing the window keeps Private Screen in the system tray. Uncheck it to fully quit when you close the window.</small>
+      </span>
+    </label>
+
+    <footer>
+      <span>Private Screen</span>
+      <span>Runs in the system tray when closed</span>
+    </footer>
+  </main>
+  <script src="renderer.js"></script>
+</body>
+</html>
