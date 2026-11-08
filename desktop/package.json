@@ -1,6 +1,6 @@
 {
   "name": "private-screen",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A simple desktop screen-dimming privacy overlay",
   "main": "main.js",
   "author": "Private Screen",
@@ -27,7 +27,8 @@
       "style.css",
       "renderer.js",
       "overlay.html",
-      "tray.png"
+      "tray.png",
+      "icon.png"
     ],
     "asar": true,
     "win": {
@@ -39,7 +40,8 @@
           ]
         }
       ],
-      "artifactName": "PrivateScreen-Windows-Setup.${ext}"
+      "artifactName": "PrivateScreen-Windows-Setup.${ext}",
+      "icon": "build/icon.ico"
     },
     "nsis": {
       "oneClick": false,
@@ -58,7 +60,8 @@
       ],
       "category": "public.app-category.utilities",
       "darkModeSupport": true,
-      "artifactName": "PrivateScreen-macOS-Universal.${ext}"
+      "artifactName": "PrivateScreen-macOS-Universal.${ext}",
+      "icon": "build/icon.png"
     }
   }
 }
