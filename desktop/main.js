@@ -180,6 +180,7 @@ function createMainWindow() {
     minWidth: 390,
     minHeight: 590,
     title: "Private Screen",
+    icon: path.join(__dirname, "tray.png"),
     backgroundColor: "#090b12",
     autoHideMenuBar: true,
     show: false,
