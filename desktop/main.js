@@ -7,12 +7,18 @@ const {
   globalShortcut,
   ipcMain,
   screen,
-  dialog
+  dialog,
+  nativeTheme
 } = require("electron");
 
 const path = require("path");
 const fs = require("fs");
 const customize = require("./customize");
+
+// Dark title bar to match the app, and a stable Windows identity so the
+// taskbar groups the app under the Shadnox icon instead of the Electron one.
+nativeTheme.themeSource = "dark";
+if (process.platform === "win32") app.setAppUserModelId("com.privatescreen.app");
 
 let mainWindow = null;
 let tray = null;
@@ -202,13 +208,13 @@ function createMainWindow() {
   }
 
   mainWindow = new BrowserWindow({
-    width: 1040,
-    height: 780,
-    minWidth: 420,
-    minHeight: 600,
+    width: 1180,
+    height: 800,
+    minWidth: 940,
+    minHeight: 640,
     title: "Shadnox",
     icon: path.join(__dirname, "build", "icon.png"),
-    backgroundColor: "#090b12",
+    backgroundColor: "#050505",
     autoHideMenuBar: true,
     show: false,
     webPreferences: {

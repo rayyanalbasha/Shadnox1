@@ -31,10 +31,17 @@ function formatHotkey(accelerator) {
     .join(" + ");
 }
 
+// Slider fill + live preview follow the strength value.
+const dimPreview = document.getElementById("dimPreview");
+function paintStrength(value) {
+  const v = Math.max(0, Math.min(90, Number(value) || 0));
+  slider.style.setProperty("--fill", (v / 90 * 100) + "%");
+  if (dimPreview) dimPreview.style.setProperty("--dim", String(v / 100));
+}
+
 function renderState(state) {
   const enabled = Boolean(state.enabled);
   toggleLabel.textContent = enabled ? "Turn off overlay" : "Turn on overlay";
-  toggleSymbol.textContent = enabled ? "◌" : "◉";
   statusText.textContent = enabled ? "Overlay is active" : "Currently off";
   statusPill.textContent = enabled ? "ON" : "OFF";
   statusPill.classList.toggle("on", enabled);
@@ -42,6 +49,7 @@ function renderState(state) {
 
   slider.value = state.strength;
   strengthValue.textContent = state.strength;
+  paintStrength(state.strength);
 
   if (typeof state.runInBackground === "boolean") {
     backgroundCheck.checked = state.runInBackground;
@@ -62,6 +70,7 @@ toggleButton.addEventListener("click", async () => {
 
 slider.addEventListener("input", async () => {
   strengthValue.textContent = slider.value;
+  paintStrength(slider.value);
   const state = await window.privateScreen.setStrength(slider.value);
   renderState(state);
 });
@@ -170,7 +179,7 @@ window.addEventListener("keydown", async event => {
   } else {
     hotkeyError.textContent = "";
     if (!hasModifier) {
-      hotkeyHint.textContent = "Heads up: this key won't type anywhere while Private Screen is running";
+      hotkeyHint.textContent = "Heads up: this key won't type anywhere while Shadnox is running";
     }
   }
   renderState(result);

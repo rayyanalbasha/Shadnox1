@@ -1,6 +1,6 @@
 {
   "name": "private-screen",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Shadnox: screen privacy overlay and desktop customization",
   "main": "main.js",
   "author": "Private Screen",
@@ -53,7 +53,14 @@
       "createStartMenuShortcut": true,
       "installerIcon": "build/icon.ico",
       "uninstallerIcon": "build/icon.ico",
-      "installerHeaderIcon": "build/icon.ico"
+      "installerHeaderIcon": "build/icon.ico",
+      "installerSidebar": "build/installerSidebar.bmp",
+      "uninstallerSidebar": "build/uninstallerSidebar.bmp",
+      "installerHeader": "build/installerHeader.bmp",
+      "shortcutName": "Shadnox",
+      "uninstallDisplayName": "Shadnox",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false
     },
     "mac": {
       "target": [
@@ -68,6 +75,30 @@
       "darkModeSupport": true,
       "artifactName": "PrivateScreen-macOS-Universal.${ext}",
       "icon": "build/icon.png"
+    },
+    "copyright": "Copyright \u00a9 2026 Shadnox",
+    "dmg": {
+      "title": "Shadnox",
+      "icon": "build/icon.png",
+      "background": "build/dmg-background.png",
+      "iconSize": 96,
+      "window": {
+        "width": 660,
+        "height": 400
+      },
+      "contents": [
+        {
+          "x": 180,
+          "y": 200,
+          "type": "file"
+        },
+        {
+          "x": 480,
+          "y": 200,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
     }
   }
 }
