@@ -21,7 +21,7 @@ body {
 .brand-icon {
   display: grid; place-items: center; width: 42px; height: 42px;
   border-radius: 13px; background: linear-gradient(135deg, #9b8cff, #6252db);
-  font-weight: 900; font-size: 22px; box-shadow: 0 8px 24px #7664ff40;
+  font-weight: 900; font-size: 22px; box-shadow: 0 8px 24px #7664ff40; object-fit: cover;
 }
 .brand-name { font-size: 12px; letter-spacing: 2px; font-weight: 800; }
 .brand-subtitle { color: #85879b; font-size: 11px; margin-top: 4px; }
@@ -76,3 +76,60 @@ kbd.recording { color: #fff; border-color: #9181ff; box-shadow: 0 0 0 2px #9181f
 .background-card input { width: 18px; height: 18px; margin-top: 2px; accent-color: #9181ff; cursor: pointer; flex-shrink: 0; }
 .background-card strong { display: block; font-size: 12px; }
 .background-card small { display: block; margin-top: 5px; color: #85879b; font-size: 10px; line-height: 1.5; }
+
+/* ===== Tabs ===== */
+[hidden] { display: none !important; }
+.app-shell { transition: max-width .25s ease; }
+.app-shell.wide { max-width: 1180px; }
+.tabs { display: flex; gap: 6px; margin-top: 22px; padding: 5px; border: 1px solid #292b3c; border-radius: 14px; background: #11131dcc; width: fit-content; }
+.tab { border: 0; border-radius: 10px; padding: 10px 18px; background: transparent; color: #85879b; font: 700 12px Inter, "Segoe UI", sans-serif; cursor: pointer; transition: background .2s, color .2s; }
+.tab:hover { color: #c7c8d5; }
+.tab.active { background: linear-gradient(100deg, #8e7cff, #6958e8); color: #fff; box-shadow: 0 6px 18px #7564ff35; }
+.tab:focus-visible, .btn:focus-visible { outline: 2px solid #b8afff; outline-offset: 2px; }
+#panel-privacy .hero { padding-top: 30px; }
+
+/* ===== Customization ===== */
+.custom-head { padding: 34px 0 22px; }
+.custom-head h2 { font-size: clamp(28px, 4vw, 38px); letter-spacing: -1.5px; margin: 14px 0 0; }
+.custom-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: start; padding-bottom: 20px; }
+@media (max-width: 900px) { .custom-grid { grid-template-columns: 1fr; } }
+.col-card { border: 1px solid #292b3c; border-radius: 20px; padding: 22px; background: linear-gradient(145deg, #171a28ef, #11131dee); box-shadow: 0 18px 55px #00000035; animation: rise .5s ease both; }
+.col-num { color: #a99eff; font-size: 10px; letter-spacing: 2px; font-weight: 800; }
+.col-card h3 { margin: 10px 0 6px; font-size: 17px; }
+.col-desc { margin: 0 0 18px; color: #9294a8; font-size: 12px; line-height: 1.6; }
+.col-body { display: flex; flex-direction: column; gap: 12px; }
+.win-note { display: none; margin-bottom: 14px; padding: 10px 12px; border-radius: 10px; background: #ff8a8a14; color: #ff9b9b; font-size: 11px; }
+.col-card.unsupported .win-note { display: block; }
+.col-card.unsupported .col-body { opacity: .4; }
+
+.img-preview { position: relative; height: 150px; border-radius: 14px; border: 1px dashed #3a3d52; background: #0d0f18 center / cover no-repeat; display: grid; place-items: center; color: #686b7d; font-size: 11px; overflow: hidden; }
+.img-preview.has-img { border-style: solid; }
+.img-preview.has-img span { display: none; }
+.file-name { min-height: 14px; color: #85879b; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.col-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.col-actions .btn { flex: 1 1 120px; }
+.btn { border: 0; border-radius: 11px; padding: 11px 14px; background: linear-gradient(100deg, #8e7cff, #6958e8); color: #fff; font: 800 11px Inter, "Segoe UI", sans-serif; cursor: pointer; transition: filter .2s, transform .2s; }
+.btn:hover:not(:disabled) { filter: brightness(1.12); transform: translateY(-1px); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn.ghost { background: #28253e; border: 1px solid #49416f; color: #c6c0ff; }
+.btn.full { width: 100%; }
+.col-hint { color: #74768a; font-size: 10px; line-height: 1.5; }
+.col-status { min-height: 14px; font-size: 11px; line-height: 1.5; }
+.col-status.ok { color: #8be0a4; }
+.col-status.err { color: #ff8a8a; }
+
+/* colour picker */
+.picker { display: flex; flex-direction: column; gap: 12px; }
+.sv-pad { position: relative; height: 170px; border-radius: 12px; cursor: crosshair; touch-action: none; }
+.hue-bar { position: relative; height: 12px; border-radius: 8px; cursor: pointer; touch-action: none; margin: 4px 7px 2px;
+  background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%); }
+.thumb { position: absolute; width: 18px; height: 18px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 1px 4px #0008; transform: translate(-50%, -50%); pointer-events: none; }
+.hue-bar .thumb { top: 50%; }
+.hex-row { display: flex; align-items: center; gap: 8px; }
+.swatch { width: 34px; height: 34px; border-radius: 10px; border: 1px solid #ffffff30; flex-shrink: 0; }
+#hexInput { flex: 1; min-width: 0; padding: 10px 11px; border-radius: 10px; border: 1px solid #292b3c; background: #0d0f18; color: #f5f5fb; font: 700 12px "Segoe UI", sans-serif; text-transform: uppercase; }
+#hexInput:focus { outline: 2px solid #9181ff; border-color: transparent; }
+.check-row { display: flex; align-items: flex-start; gap: 11px; padding: 13px; border: 1px solid #292b3c; border-radius: 14px; background: #0f111b; cursor: pointer; }
+.check-row input { width: 17px; height: 17px; margin-top: 1px; accent-color: #9181ff; cursor: pointer; flex-shrink: 0; }
+.check-row strong { display: block; font-size: 12px; }
+.check-row small { display: block; margin-top: 4px; color: #85879b; font-size: 10px; line-height: 1.5; }

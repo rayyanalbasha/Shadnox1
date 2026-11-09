@@ -11,6 +11,15 @@ contextBridge.exposeInMainWorld("privateScreen", {
   showMain: () => ipcRenderer.invoke("show-main"),
   quitApp: () => ipcRenderer.invoke("quit-app"),
 
+  pickImage: purpose => ipcRenderer.invoke("pick-image", purpose),
+  applyDesktopWallpaper: () => ipcRenderer.invoke("apply-desktop-wallpaper"),
+  applyLockScreen: () => ipcRenderer.invoke("apply-lockscreen"),
+  resetLockScreen: () => ipcRenderer.invoke("reset-lockscreen"),
+  applyTaskbarColor: hex => ipcRenderer.invoke("apply-taskbar-color", hex),
+  resetTaskbar: () => ipcRenderer.invoke("reset-taskbar"),
+  setTaskbarTransparent: value => ipcRenderer.invoke("set-taskbar-transparent", value),
+  setStartWithWindows: value => ipcRenderer.invoke("set-start-with-windows", value),
+
   onStateChanged: callback => {
     const listener = (_event, state) => callback(state);
     ipcRenderer.on("state-changed", listener);

@@ -1,6 +1,6 @@
-# Private Screen
+# Shadnox
 
-- `desktop/`  Electron app
+- `desktop/`  Electron app (Private Screen overlay + wallpaper, lock screen and taskbar customization)
 - `website/`  static download site (deploy on Render, Root Directory = `website`)
 
 Installers are built by GitHub Actions (`.github/workflows/release.yml`) and published

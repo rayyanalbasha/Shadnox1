@@ -6,11 +6,13 @@ const {
   nativeImage,
   globalShortcut,
   ipcMain,
-  screen
+  screen,
+  dialog
 } = require("electron");
 
 const path = require("path");
 const fs = require("fs");
+const customize = require("./customize");
 
 let mainWindow = null;
 let tray = null;
@@ -23,6 +25,16 @@ const isMac = process.platform === "darwin";
 const DEFAULT_HOTKEY = "CommandOrControl+Shift+P";
 let hotkey = DEFAULT_HOTKEY;
 let runInBackground = true;
+
+// Customization settings
+let taskbarColor = "#7c6cff";
+let taskbarColorApplied = false;
+let taskbarTransparent = false;
+let startWithWindows = false;
+let desktopWallpaperName = "";
+let lockScreenSet = false;
+const startHidden = process.argv.includes("--hidden");
+const picked = {}; // image paths chosen in the file dialog, by purpose
 
 // Only allow one copy of the app. A second launch just opens the existing window,
 // so you can always turn the overlay off from the running instance.
@@ -46,6 +58,12 @@ function loadSettings() {
     if (typeof data.runInBackground === "boolean") runInBackground = data.runInBackground;
     const saved = Number(data.strength);
     if (Number.isFinite(saved)) strength = Math.max(0, Math.min(90, Math.round(saved)));
+    if (typeof data.taskbarColor === "string" && /^#[0-9a-fA-F]{6}$/.test(data.taskbarColor)) taskbarColor = data.taskbarColor;
+    if (typeof data.taskbarColorApplied === "boolean") taskbarColorApplied = data.taskbarColorApplied;
+    if (typeof data.taskbarTransparent === "boolean") taskbarTransparent = data.taskbarTransparent;
+    if (typeof data.startWithWindows === "boolean") startWithWindows = data.startWithWindows;
+    if (typeof data.desktopWallpaperName === "string") desktopWallpaperName = data.desktopWallpaperName.slice(0, 120);
+    if (typeof data.lockScreenSet === "boolean") lockScreenSet = data.lockScreenSet;
   } catch (_) {
     // first run or unreadable file: use defaults
   }
@@ -54,12 +72,21 @@ function loadSettings() {
 function saveSettings() {
   try {
     fs.mkdirSync(path.dirname(settingsFile()), { recursive: true });
-    fs.writeFileSync(settingsFile(), JSON.stringify({ hotkey, strength, runInBackground }));
+    fs.writeFileSync(settingsFile(), JSON.stringify({
+      hotkey, strength, runInBackground,
+      taskbarColor, taskbarColorApplied, taskbarTransparent, startWithWindows,
+      desktopWallpaperName, lockScreenSet
+    }));
   } catch (_) {}
 }
 
 function currentState() {
-  return { enabled: overlayEnabled, strength, hotkey, runInBackground };
+  return {
+    enabled: overlayEnabled, strength, hotkey, runInBackground,
+    platform: process.platform,
+    taskbarColor, taskbarColorApplied, taskbarTransparent, startWithWindows,
+    desktopWallpaperName, lockScreenSet
+  };
 }
 
 function broadcastState() {
@@ -175,12 +202,11 @@ function createMainWindow() {
   }
 
   mainWindow = new BrowserWindow({
-    width: 470,
-    height: 690,
-    minWidth: 390,
-    minHeight: 590,
-    title: "Private Screen",
-    icon: path.join(__dirname, "icon.png"),
+    width: 1040,
+    height: 780,
+    minWidth: 420,
+    minHeight: 600,
+    title: "Shadnox",
     backgroundColor: "#090b12",
     autoHideMenuBar: true,
     show: false,
@@ -195,7 +221,7 @@ function createMainWindow() {
   mainWindow.loadFile(path.join(__dirname, "index.html"));
 
   mainWindow.once("ready-to-show", () => {
-    mainWindow.show();
+    if (!startHidden) mainWindow.show();
     broadcastState();
   });
 
@@ -222,11 +248,11 @@ function createTray() {
   const icon = nativeImage.createFromPath(path.join(__dirname, "tray.png"));
 
   tray = new Tray(icon);
-  tray.setToolTip("Private Screen");
+  tray.setToolTip("Shadnox");
 
   tray.setContextMenu(Menu.buildFromTemplate([
     {
-      label: "Open Private Screen",
+      label: "Open Shadnox",
       click: () => createMainWindow()
     },
     {
@@ -235,7 +261,7 @@ function createTray() {
     },
     { type: "separator" },
     {
-      label: "Quit Private Screen",
+      label: "Quit Shadnox",
       click: () => {
         app.isQuitting = true;
         app.quit();
@@ -324,9 +350,88 @@ ipcMain.handle("quit-app", () => {
   app.quit();
 });
 
+// ---- Customization ----
+async function guarded(work) {
+  try {
+    await work();
+    return { ...currentState(), ok: true };
+  } catch (err) {
+    return { ...currentState(), error: (err && err.message) || "Something went wrong." };
+  }
+}
+
+ipcMain.handle("pick-image", async (_event, purpose) => {
+  if (purpose !== "desktop" && purpose !== "lock") return null;
+  const result = await dialog.showOpenDialog(mainWindow, {
+    title: "Choose an image",
+    properties: ["openFile"],
+    filters: [{ name: "Images", extensions: ["jpg", "jpeg", "png", "bmp"] }]
+  });
+  if (result.canceled || !result.filePaths[0]) return null;
+
+  const file = result.filePaths[0];
+  const image = nativeImage.createFromPath(file);
+  if (image.isEmpty()) {
+    delete picked[purpose];
+    return { error: "That file could not be read as an image." };
+  }
+  picked[purpose] = file;
+  return { name: path.basename(file), preview: image.resize({ width: 480 }).toDataURL() };
+});
+
+ipcMain.handle("apply-desktop-wallpaper", () => guarded(async () => {
+  if (!picked.desktop) throw new Error("Choose an image first.");
+  await customize.setDesktopWallpaper(picked.desktop);
+  desktopWallpaperName = path.basename(picked.desktop);
+  saveSettings();
+}));
+
+ipcMain.handle("apply-lockscreen", () => guarded(async () => {
+  if (!picked.lock) throw new Error("Choose an image first.");
+  await customize.setLockScreen(picked.lock);
+  lockScreenSet = true;
+  saveSettings();
+}));
+
+ipcMain.handle("reset-lockscreen", () => guarded(async () => {
+  await customize.resetLockScreen();
+  lockScreenSet = false;
+  saveSettings();
+}));
+
+ipcMain.handle("apply-taskbar-color", (_event, hex) => guarded(async () => {
+  await customize.setTaskbarColor(hex);
+  taskbarColor = String(hex).toLowerCase();
+  taskbarColorApplied = true;
+  saveSettings();
+}));
+
+ipcMain.handle("reset-taskbar", () => guarded(async () => {
+  await customize.resetTaskbar();
+  taskbarColorApplied = false;
+  taskbarTransparent = false;
+  saveSettings();
+}));
+
+ipcMain.handle("set-taskbar-transparent", (_event, value) => guarded(async () => {
+  if (process.platform !== "win32") throw new Error("The taskbar is only available on Windows.");
+  taskbarTransparent = Boolean(value);
+  if (taskbarTransparent) customize.startTransparent();
+  else await customize.stopTransparent();
+  saveSettings();
+}));
+
+ipcMain.handle("set-start-with-windows", (_event, value) => guarded(async () => {
+  startWithWindows = Boolean(value);
+  app.setLoginItemSettings({ openAtLogin: startWithWindows, args: ["--hidden"] });
+  saveSettings();
+}));
+
 app.whenReady().then(() => {
   if (!gotLock) return;
   loadSettings();
+  customize.init(app.getPath("userData"));
+  if (taskbarTransparent) customize.startTransparent();
   createMainWindow();
   syncDisplays();
   createTray();

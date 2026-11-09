@@ -1,7 +1,7 @@
 {
   "name": "private-screen",
-  "version": "1.0.4",
-  "description": "A simple desktop screen-dimming privacy overlay",
+  "version": "1.1.0",
+  "description": "Shadnox: screen privacy overlay and desktop customization",
   "main": "main.js",
   "author": "Private Screen",
   "license": "UNLICENSED",
@@ -16,7 +16,7 @@
   },
   "build": {
     "appId": "com.privatescreen.app",
-    "productName": "Private Screen",
+    "productName": "Shadnox",
     "directories": {
       "output": "release"
     },
@@ -28,7 +28,9 @@
       "renderer.js",
       "overlay.html",
       "tray.png",
-      "icon.png"
+      "logo.png",
+      "customize.js",
+      "scripts/*.ps1"
     ],
     "asar": true,
     "win": {
@@ -40,8 +42,7 @@
           ]
         }
       ],
-      "artifactName": "PrivateScreen-Windows-Setup.${ext}",
-      "icon": "build/icon.ico"
+      "artifactName": "PrivateScreen-Windows-Setup.${ext}"
     },
     "nsis": {
       "oneClick": false,
@@ -60,8 +61,7 @@
       ],
       "category": "public.app-category.utilities",
       "darkModeSupport": true,
-      "artifactName": "PrivateScreen-macOS-Universal.${ext}",
-      "icon": "build/icon.png"
+      "artifactName": "PrivateScreen-macOS-Universal.${ext}"
     }
   }
 }
