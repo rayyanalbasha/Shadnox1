@@ -78,6 +78,7 @@ jobs:
         with:
           path: dist
           merge-multiple: true
+<<<<<<< HEAD
       - name: Verify release files
         run: |
           echo "Files to publish:"
@@ -101,3 +102,14 @@ jobs:
           fi
           gh release upload "$TAG" dist/* --repo "$REPO" --clobber
           gh release edit "$TAG" --repo "$REPO" --latest
+=======
+      - name: Publish release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "build-${{ github.run_number }}" dist/* \
+            --repo "${{ github.repository }}" \
+            --title "Shadnox build ${{ github.run_number }}" \
+            --notes "Automated desktop installers and Android APK. The Android APK is a debug-signed build for testing. iPhone users can install the website as a Home Screen web app using Safari." \
+            --latest
+>>>>>>> 310f2a2a3642408b76d0aa8bb2223e3af535daf4
