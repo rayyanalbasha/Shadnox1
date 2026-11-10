@@ -1,20 +1,19 @@
-name: Build installers and mobile app
-
+﻿name: Build installers and mobile app
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
       - "desktop/**"
       - "mobile/**"
       - "website/**"
       - ".github/workflows/release.yml"
-
 permissions:
   contents: write
-
 jobs:
   desktop-build:
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
@@ -25,7 +24,6 @@ jobs:
             script: build:mac
           - os: ubuntu-latest
             script: build:linux
-    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -34,7 +32,7 @@ jobs:
       - name: Install Linux packaging dependencies
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y rpm fakeroot dpkg
-      - name: Install dependencies
+      - name: Install desktop dependencies
         working-directory: desktop
         run: npm install
       - name: Build desktop installer
@@ -42,13 +40,12 @@ jobs:
         run: npm run ${{ matrix.script }}
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
-      - uses: actions/upload-artifact@v4
+      - name: Upload desktop installers
+        uses: actions/upload-artifact@v4
         with:
           name: desktop-${{ runner.os }}
           path: desktop/release/*
           if-no-files-found: error
-          retention-days: 7
-
   android-build:
     runs-on: ubuntu-latest
     steps:
@@ -56,74 +53,45 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
       - uses: gradle/actions/setup-gradle@v4
-      - name: Build Android debug APK
+      - name: Build Android APK
         working-directory: mobile/android
         run: gradle assembleDebug
-      - name: Name APK for website download
-<<<<<<< HEAD
+      - name: Prepare Android APK
         run: cp mobile/android/app/build/outputs/apk/debug/app-debug.apk PrivateScreen-Android.apk
-      - uses: actions/upload-artifact@v4
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
         with:
-          name: PrivateScreen-Android.apk
+          name: android-apk
           path: PrivateScreen-Android.apk
-=======
-        run: cp mobile/android/app/build/outputs/apk/debug/app-debug.apk Shadnox-Android.apk
-      - uses: actions/upload-artifact@v4
-        with:
-          name: Shadnox-Android.apk
-          path: Shadnox-Android.apk
->>>>>>> 719434e21f475f8a17e53a5d64f8c7846aded9a8
           if-no-files-found: error
-          retention-days: 7
-
   release:
-    needs: [desktop-build, android-build]
+    needs:
+      - desktop-build
+      - android-build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
         with:
           path: dist
           merge-multiple: true
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 719434e21f475f8a17e53a5d64f8c7846aded9a8
-      - name: Verify release files
+      - name: Check release files
         run: |
-          echo "Files to publish:"
           find dist -maxdepth 2 -type f -print
           test -n "$(find dist -maxdepth 2 -type f -print -quit)"
-      - name: Publish or update release assets
+      - name: Publish release assets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
           TAG: build-${{ github.run_number }}
         run: |
           set -euo pipefail
-          if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
-            echo "Release $TAG already exists; refreshing its assets."
-          else
+          if ! gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
             gh release create "$TAG" \
               --repo "$REPO" \
-              --title "Shadnox build ${{ github.run_number }}" \
-              --notes "Automated desktop installers and Android APK. The Android APK is a debug-signed testing build. On iPhone, use Safari's Share menu and Add to Home Screen to install the website experience." \
-              --latest
+              --title "PrivateScreen build ${{ github.run_number }}" \
+              --notes "Automated desktop installers and Android testing APK."
           fi
           gh release upload "$TAG" dist/* --repo "$REPO" --clobber
           gh release edit "$TAG" --repo "$REPO" --latest
-<<<<<<< HEAD
-=======
-=======
-      - name: Publish release assets
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "build-${{ github.run_number }}" dist/* \
-            --repo "${{ github.repository }}" \
-            --title "Shadnox build ${{ github.run_number }}" \
-            --notes "Automated desktop installers and Android APK. The Android APK is a debug-signed build for testing. iPhone users can install the website as a Home Screen web app using Safari." \
-            --latest
->>>>>>> 310f2a2a3642408b76d0aa8bb2223e3af535daf4
->>>>>>> 719434e21f475f8a17e53a5d64f8c7846aded9a8
