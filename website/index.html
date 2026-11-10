@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Shadnox is a free desktop app for Windows, macOS, and Linux. Customize your wallpaper, lock screen and taskbar, and add a Private Screen layer for extra privacy.">
+  <meta name="theme-color" content="#050505">
+  <title>Shadnox | Customize Your World. Own Your Experience.</title>
+  <link rel="icon" type="image/png" href="favicon.png?v=2">
+  <link rel="apple-touch-icon" sizes="256x256" href="favicon.png?v=2">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    document.documentElement.classList.add("js");
+    setTimeout(function () { if (document.body) document.body.classList.add("ready"); }, 2500);
+  </script>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-win10" viewBox="0 0 24 24"><path fill="#0078d7" d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></symbol>
+    <symbol id="i-win11" viewBox="0 0 24 24"><path fill="#0078d4" d="M0 0h11.377v11.372H0zm12.623 0H24v11.372H12.623zM0 12.623h11.377V24H0zm12.623 0H24V24H12.623z"/></symbol>
+    <symbol id="i-linux" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a4 4 0 0 0-4 4v4l-2 3v4h3l1 4h4l1-4h3v-4l-2-3V6a4 4 0 0 0-4-4Z"/><circle cx="10" cy="7" r=".7"/><circle cx="14" cy="7" r=".7"/></symbol>
+    <symbol id="i-apple" viewBox="0 0 24 24"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></symbol>
+  </svg>
+
+  <div class="curtain"></div>
+  <div class="progress"></div>
+  <div class="bg" aria-hidden="true">
+    <div class="orb o1"><i></i></div>
+    <div class="orb o2"><i></i></div>
+    <div class="orb o3"><i></i></div>
+  </div>
+  <div class="glow" aria-hidden="true"></div>
+
+  <header class="nav-wrap">
+    <nav class="nav wrap">
+      <a class="brand" href="index.html"><img class="brand-mark" src="favicon.png?v=2" alt=""><span>SHADNOX</span></a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#downloads">Downloads</a>
+        <a href="about.html">About</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <div class="hero-copy">
+        <div class="tag rv"><span></span> DESKTOP CUSTOMIZATION &amp; PRIVACY</div>
+        <h1 data-split>Make your desktop <em>truly yours.</em></h1>
+        <p class="lead rv" style="--d:.35s">Shadnox is a free desktop app that helps you personalize your PC with your own wallpaper, lock screen and taskbar, and adds a Private Screen layer that makes your display less visible to people nearby.</p>
+        <div class="hero-actions rv" style="--d:.5s">
+          <a class="btn primary mag" href="#downloads">Get Shadnox <span class="arrow">↓</span></a>
+          <a class="btn ghost mag" href="about.html">About Shadnox</a>
+        </div>
+        <div class="note rv" style="--d:.6s">
+          <svg><use href="#i-win11"/></svg><svg><use href="#i-apple"/></svg>
+          Windows 10 · Windows 11 · macOS · Linux
+        </div>
+      </div>
+
+      <div class="stage rv" style="--d:.3s" aria-label="Animated app preview">
+        <div class="chip c1">Wallpaper</div>
+        <div class="chip c2">Lock screen</div>
+        <div class="chip c3">Taskbar</div>
+        <div class="device" id="device">
+          <div class="desk">
+            <div class="desk-wall"></div>
+            <div class="win w1"><div class="dots"><i></i><i></i><i></i></div><div class="lines"><b></b><b></b><b></b></div></div>
+            <div class="win w2"><div class="dots"><i></i><i></i><i></i></div><div class="lines"><b></b><b></b></div></div>
+            <div class="taskbar"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="shade" id="shade"></div>
+            <div class="badge"><span>Private Screen</span><b id="pct">0%</b><div class="meter"><i id="meter"></i></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="track">
+        <span>WALLPAPER</span><span>✦</span><span>LOCK SCREEN</span><span>✦</span><span>TASKBAR</span><span>✦</span><span>PRIVATE SCREEN</span><span>✦</span><span>PERSONALIZE</span><span>✦</span><span>PRIVACY</span><span>✦</span>
+        <span>WALLPAPER</span><span>✦</span><span>LOCK SCREEN</span><span>✦</span><span>TASKBAR</span><span>✦</span><span>PRIVATE SCREEN</span><span>✦</span><span>PERSONALIZE</span><span>✦</span><span>PRIVACY</span><span>✦</span>
+      </div>
+    </div>
+
+    <section class="features wrap" id="features">
+      <div class="section-head">
+        <div class="tag rv"><span></span> WHAT YOU GET</div>
+        <h2 class="rv" style="--d:.1s">One app. Your whole desktop.</h2>
+        <p class="rv" style="--d:.2s">Shadnox brings customization and privacy tools together in one simple place, so your computer looks and feels the way you want.</p>
+      </div>
+      <div class="cards">
+        <article class="card rv" style="--d:.05s">
+          <div class="card-num">01</div>
+          <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M3 17l5-4 4 3 3-2 6 4"/></svg></div>
+          <h3>Desktop wallpaper</h3>
+          <p>Pick any image and set it as your desktop background in a couple of clicks. Works on Windows and macOS.</p>
+        </article>
+        <article class="card rv" style="--d:.15s">
+          <div class="card-num">02</div>
+          <div class="ico"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></div>
+          <h3>Lock screen</h3>
+          <p>Use your own image on the Windows lock screen, and restore the default whenever you like.</p>
+        </article>
+        <article class="card rv" style="--d:.25s">
+          <div class="card-num">03</div>
+          <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15h18M7 17.2h.01M11 17.2h.01"/></svg></div>
+          <h3>Taskbar</h3>
+          <p>Choose any taskbar color or remove its background for a clean, see-through look. Reset it any time.</p>
+        </article>
+        <article class="card rv" style="--d:.35s">
+          <div class="card-num">04</div>
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/></svg></div>
+          <h3>Private Screen</h3>
+          <p>Dim your display with one shortcut, set the strength you want and cover every monitor.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="steps wrap">
+      <div class="step rv"><b>1</b><h3>Download</h3><p>Pick the installer for your system below.</p></div>
+      <div class="step rv" style="--d:.12s"><b>2</b><h3>Install</h3><p>Run the setup and open Shadnox from your desktop.</p></div>
+      <div class="step rv" style="--d:.24s"><b>3</b><h3>Customize</h3><p>Change your wallpaper, taskbar and lock screen, or turn on Private Screen.</p></div>
+    </section>
+
+    <section class="downloads light" id="downloads">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="tag rv"><span></span> GET THE APP</div>
+          <h2 class="rv" style="--d:.1s">Choose your platform.</h2>
+          <p class="rv" style="--d:.2s">Download the installer for your operating system.</p>
+        </div>
+        <div class="download-grid">
+          <article class="dl-card rv" style="--d:.05s">
+            <svg class="plat"><use href="#i-win10"/></svg>
+            <h3>Windows 10</h3>
+            <p>64-bit installer</p>
+            <a class="btn dark mag" href="https://github.com/rayyanalbasha/PrivateScreen/releases/latest/download/Shadnox-Windows-Setup.exe">Download for Windows 10</a>
+          </article>
+          <article class="dl-card featured rv" style="--d:.15s">
+            <svg class="plat"><use href="#i-win11"/></svg>
+            <h3>Windows 11</h3>
+            <p>64-bit installer</p>
+            <a class="btn light-btn mag" href="https://github.com/rayyanalbasha/PrivateScreen/releases/latest/download/Shadnox-Windows-Setup.exe">Download for Windows 11</a>
+          </article>
+          <article class="dl-card rv" style="--d:.25s">
+            <svg class="plat"><use href="#i-apple"/></svg>
+            <h3>macOS</h3>
+            <p>Universal · Intel and Apple Silicon</p>
+            <a class="btn dark mag" href="https://github.com/rayyanalbasha/PrivateScreen/releases/latest/download/Shadnox-macOS-Universal.dmg">Download for macOS</a>
+          </article>
+          <article class="dl-card rv" style="--d:.35s">
+            <svg class="plat"><use href="#i-linux"/></svg>
+            <h3>Linux</h3>
+            <p>64-bit AppImage / Debian package</p>
+            <a class="btn dark mag" href="https://github.com/rayyanalbasha/PrivateScreen/releases/latest">View Linux downloads</a>
+          </article>
+        </div>
+        <p class="footnote rv">The Windows 10 and Windows 11 downloads are the same compatible 64-bit installer. The desktop overlay is available on supported desktop systems. Lock screen and taskbar tools are Windows-only. Linux builds provide the desktop app; Windows-specific customization controls are unavailable there.</p>
+      </div>
+    </section>
+
+    <section class="downloads light" id="mobile-app">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="tag rv"><span></span> MOBILE</div>
+          <h2 class="rv" style="--d:.1s">Shadnox for phones.</h2>
+          <p class="rv" style="--d:.2s">Install the Android app APK, or add the Shadnox web app to your iPhone Home Screen. Mobile installation is separate from the desktop overlay.</p>
+        </div>
+        <div class="download-grid mobile-download-grid">
+          <article class="dl-card featured rv" style="--d:.05s">
+            <svg class="plat"><use href="#i-linux"/></svg>
+            <h3>Android</h3>
+            <p>APK installer · Android 8.0+</p>
+            <a class="btn light-btn mag" href="https://github.com/rayyanalbasha/PrivateScreen/releases/latest/download/Shadnox-Android.apk">Download Android APK</a>
+            <p class="footnote">After downloading, open the APK and allow your browser or file manager to install unknown apps if Android asks. This is a testing build.</p>
+          </article>
+          <article class="dl-card rv" style="--d:.15s">
+            <svg class="plat"><use href="#i-apple"/></svg>
+            <h3>iPhone / iPad</h3>
+            <p>Installable web app · Safari</p>
+            <a class="btn dark mag" href="#iphone-install">How to install</a>
+            <p class="footnote">iOS does not permit a website to install an unsigned native IPA or create arbitrary app aliases.</p>
+          </article>
+        </div>
+        <div id="iphone-install" class="iphone-install rv">
+          <h3>Install on iPhone</h3>
+          <ol>
+            <li>Open this website in <strong>Safari</strong> on your iPhone.</li>
+            <li>Tap the <strong>Share</strong> button.</li>
+            <li>Choose <strong>Add to Home Screen</strong>, then tap <strong>Add</strong>.</li>
+          </ol>
+          <p class="footnote">This adds the Shadnox website as a Home Screen web app. It does not provide the native Private Screen overlay or permission to browse all installed iPhone apps. A native iOS app would require an Apple-signed build and distribution through Apple-supported methods.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta wrap">
+      <h2 class="rv">Customize your world.<br><em>Own your experience.</em></h2>
+      <p class="rv" style="--d:.1s">Shadnox is an independent project built with passion by one developer.</p>
+      <a class="btn primary mag rv" style="--d:.2s" href="about.html">Read the story <span class="arrow">→</span></a>
+    </section>
+  </main>
+
+  <footer class="wrap foot">
+    <a class="brand" href="index.html"><img class="brand-mark" src="favicon.png?v=2" alt=""><span>SHADNOX</span></a>
+    <div class="foot-links"><a href="#features">Features</a><a href="#downloads">Downloads</a><a href="about.html">About</a></div>
+    <span>© 2026 Shadnox</span>
+  </footer>
+  <script src="script.js"></script>
+  <script>if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) navigator.serviceWorker.register("./sw.js").catch(function () {});</script>
+</body>
+</html>
