@@ -10,8 +10,11 @@ Downloads (website links use "releases/latest"):
   Shadnox-Windows-Setup.exe, Shadnox-macOS-Universal.dmg,
   Shadnox-Linux.AppImage, Shadnox-Linux.deb, Shadnox-Android.apk
 
-IMPORTANT: keep your existing desktop/scripts/ folder (wallpaper.ps1, lockscreen.ps1,
-taskbar-color.ps1, taskbar-transparent.ps1). It is not part of this zip.
+desktop/scripts/ (wallpaper.ps1, lockscreen.ps1, taskbar-color.ps1, taskbar-transparent.ps1)
+is included in this zip.
+
+If the Android download gives a 404: open GitHub -> Actions -> the latest run -> the "android" job.
+The release is published even when Android fails, just without the APK.
 
 Android signing: android/app/shadnox.keystore signs every APK so new builds update old ones.
 The passwords are in android/app/build.gradle.kts. Anyone with the repo could sign an app with
