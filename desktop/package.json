@@ -44,7 +44,7 @@
           ]
         }
       ],
-      "artifactName": "PrivateScreen-Windows-Setup.${ext}",
+      "artifactName": "Shadnox-Windows-Setup.${ext}",
       "icon": "build/icon.ico"
     },
     "nsis": {
@@ -74,7 +74,7 @@
       ],
       "category": "public.app-category.utilities",
       "darkModeSupport": true,
-      "artifactName": "PrivateScreen-macOS-Universal.${ext}",
+      "artifactName": "Shadnox-macOS-Universal.${ext}",
       "icon": "build/icon.png"
     },
     "copyright": "Copyright \u00a9 2026 Shadnox",
@@ -110,7 +110,7 @@
       "icon": "build/icon.png",
       "maintainer": "Shadnox <rayyanalbasha@users.noreply.github.com>",
       "synopsis": "Customize your desktop and protect your screen",
-      "artifactName": "PrivateScreen-Linux.${ext}"
+      "artifactName": "Shadnox-Linux.${ext}"
     }
   },
   "homepage": "https://shadnox1.onrender.com"

@@ -7,8 +7,8 @@ android/   -> Android app (Kotlin): Private Screen overlay + App Shortcuts (cust
 .github/workflows/release.yml -> builds Windows, macOS, Linux and Android and publishes ONE release
 
 Downloads (website links use "releases/latest"):
-  PrivateScreen-Windows-Setup.exe, PrivateScreen-macOS-Universal.dmg,
-  PrivateScreen-Linux.AppImage, PrivateScreen-Linux.deb, Shadnox-Android.apk
+  Shadnox-Windows-Setup.exe, Shadnox-macOS-Universal.dmg,
+  Shadnox-Linux.AppImage, Shadnox-Linux.deb, Shadnox-Android.apk
 
 IMPORTANT: keep your existing desktop/scripts/ folder (wallpaper.ps1, lockscreen.ps1,
 taskbar-color.ps1, taskbar-transparent.ps1). It is not part of this zip.

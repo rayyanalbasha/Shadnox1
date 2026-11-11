@@ -21,17 +21,17 @@ jobs:
           - os: windows-latest
             script: build:win
             artifact: windows
-            pattern: PrivateScreen-Windows-Setup.exe
+            pattern: Shadnox-Windows-Setup.exe
             optional: false
           - os: macos-latest
             script: build:mac
             artifact: macos
-            pattern: PrivateScreen-macOS-Universal.dmg
+            pattern: Shadnox-macOS-Universal.dmg
             optional: false
           - os: ubuntu-latest
             script: build:linux
             artifact: linux
-            pattern: PrivateScreen-Linux.*
+            pattern: Shadnox-Linux.*
             optional: true
     runs-on: ${{ matrix.os }}
     # A problem in the optional Linux build never blocks the Windows and macOS release.
@@ -90,6 +90,11 @@ jobs:
           merge-multiple: true
       - name: List files
         run: ls -la dist
+      - name: Check the files the website links to exist
+        run: |
+          for f in Shadnox-Windows-Setup.exe Shadnox-macOS-Universal.dmg; do
+            test -f "dist/$f" || { echo "::error::Missing dist/$f - website download would 404"; exit 1; }
+          done
       - name: Publish release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
