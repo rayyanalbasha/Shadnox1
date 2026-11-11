@@ -25,10 +25,18 @@
   <div id="shade"></div>
   <script>
     const shade = document.getElementById("shade");
-    window.privateScreen.onOverlayUpdate(state => {
-      const opacity = Math.max(0, Math.min(90, Number(state.strength) || 0)) / 100;
-      shade.style.backgroundColor = `rgba(0, 0, 0, ${opacity})`;
-    });
+    const solid = navigator.userAgent.includes("Windows");
+    if (solid) {
+      // Windows: the window itself is black and its opacity is set by the app.
+      document.documentElement.style.background = "#000";
+      document.body.style.background = "#000";
+      shade.style.backgroundColor = "#000";
+    } else {
+      window.privateScreen.onOverlayUpdate(state => {
+        const opacity = Math.max(0, Math.min(90, Number(state.strength) || 0)) / 100;
+        shade.style.backgroundColor = `rgba(0, 0, 0, ${opacity})`;
+      });
+    }
   </script>
 </body>
 </html>

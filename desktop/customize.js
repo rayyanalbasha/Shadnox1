@@ -8,6 +8,7 @@ const path = require("path");
 
 const isWin = process.platform === "win32";
 const isMac = process.platform === "darwin";
+const isLinux = process.platform === "linux";
 const IMAGE_EXT = [".jpg", ".jpeg", ".png", ".bmp"];
 
 let dataDir = "";
@@ -94,7 +95,32 @@ async function setDesktopWallpaper(src) {
       'tell application "System Events" to tell every desktop to set picture to POSIX file "' + dest + '"'
     ]);
   }
+  if (isLinux) return setLinuxWallpaper(dest);
   throw new Error("Changing the wallpaper is not supported on this system.");
+}
+
+// Linux: try the common desktops in turn (GNOME/Cinnamon/MATE, KDE Plasma, XFCE, then feh).
+async function setLinuxWallpaper(file) {
+  const uri = "file://" + encodeURI(file);
+  const tries = [
+    async () => {
+      await run("gsettings", ["set", "org.gnome.desktop.background", "picture-uri", uri]);
+      try { await run("gsettings", ["set", "org.gnome.desktop.background", "picture-uri-dark", uri]); } catch (_) {}
+      try { await run("gsettings", ["set", "org.gnome.desktop.background", "picture-options", "zoom"]); } catch (_) {}
+    },
+    () => run("plasma-apply-wallpaperimage", [file]),
+    async () => {
+      const list = await run("xfconf-query", ["-c", "xfce4-desktop", "-l"]);
+      const props = list.split(/\r?\n/).filter(p => p.endsWith("/last-image"));
+      if (!props.length) throw new Error("no xfce desktop");
+      for (const p of props) await run("xfconf-query", ["-c", "xfce4-desktop", "-p", p, "-s", file]);
+    },
+    () => run("feh", ["--bg-fill", file])
+  ];
+  for (const attempt of tries) {
+    try { await attempt(); return; } catch (_) { /* try the next desktop */ }
+  }
+  throw new Error("Could not change the wallpaper on this Linux desktop.");
 }
 
 // ---- Lock screen (Windows, needs administrator once) ----

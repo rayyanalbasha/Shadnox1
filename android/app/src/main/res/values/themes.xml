@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="shadnox_bg">#FF050505</color>
+
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/shadnox_bg</item>
+        <item name="android:statusBarColor">@color/shadnox_bg</item>
+        <item name="android:navigationBarColor">@color/shadnox_bg</item>
+        <item name="android:textColorPrimary">#FFF4F4F4</item>
+        <item name="android:colorBackground">@color/shadnox_bg</item>
+    </style>
+
+    <style name="FullDialog" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/shadnox_bg</item>
+        <item name="android:statusBarColor">@color/shadnox_bg</item>
+        <item name="android:navigationBarColor">@color/shadnox_bg</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
+</resources>

@@ -1,5 +1,5 @@
 {
-  "name": "shadnox",
+  "name": "private-screen",
   "version": "1.2.0",
   "description": "Shadnox: screen privacy overlay and desktop customization",
   "main": "main.js",
@@ -16,7 +16,7 @@
     "electron-builder": "^26.0.0"
   },
   "build": {
-    "appId": "com.shadnox.app",
+    "appId": "com.privatescreen.app",
     "productName": "Shadnox",
     "directories": {
       "output": "release"
@@ -44,7 +44,7 @@
           ]
         }
       ],
-      "artifactName": "Shadnox-Windows-Setup.${ext}",
+      "artifactName": "PrivateScreen-Windows-Setup.${ext}",
       "icon": "build/icon.ico"
     },
     "nsis": {
@@ -63,13 +63,6 @@
       "runAfterFinish": true,
       "deleteAppDataOnUninstall": false
     },
-    "linux": {
-      "target": ["AppImage", "deb"],
-      "category": "Utility",
-      "artifactName": "Shadnox-Linux-${arch}.${ext}",
-      "icon": "build/icon.png",
-      "synopsis": "Desktop privacy overlay and customization tools"
-    },
     "mac": {
       "target": [
         {
@@ -81,7 +74,7 @@
       ],
       "category": "public.app-category.utilities",
       "darkModeSupport": true,
-      "artifactName": "Shadnox-macOS-Universal.${ext}",
+      "artifactName": "PrivateScreen-macOS-Universal.${ext}",
       "icon": "build/icon.png"
     },
     "copyright": "Copyright \u00a9 2026 Shadnox",
@@ -107,6 +100,18 @@
           "path": "/Applications"
         }
       ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility",
+      "icon": "build/icon.png",
+      "maintainer": "Shadnox <rayyanalbasha@users.noreply.github.com>",
+      "synopsis": "Customize your desktop and protect your screen",
+      "artifactName": "PrivateScreen-Linux.${ext}"
     }
-  }
+  },
+  "homepage": "https://shadnox1.onrender.com"
 }

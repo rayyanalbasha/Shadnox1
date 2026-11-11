@@ -1,4 +1,4 @@
-name: Build installers and mobile app
+name: Build installers and publish release
 
 on:
   workflow_dispatch:
@@ -6,101 +6,96 @@ on:
     branches: [main]
     paths:
       - "desktop/**"
-      - "mobile/**"
-      - "website/**"
+      - "android/**"
       - ".github/workflows/release.yml"
 
 permissions:
   contents: write
 
 jobs:
-  desktop-build:
+  desktop:
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: windows-latest
             script: build:win
+            artifact: windows
+            pattern: PrivateScreen-Windows-Setup.exe
+            optional: false
           - os: macos-latest
             script: build:mac
+            artifact: macos
+            pattern: PrivateScreen-macOS-Universal.dmg
+            optional: false
           - os: ubuntu-latest
             script: build:linux
+            artifact: linux
+            pattern: PrivateScreen-Linux.*
+            optional: true
     runs-on: ${{ matrix.os }}
+    # A problem in the optional Linux build never blocks the Windows and macOS release.
+    continue-on-error: ${{ matrix.optional }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install Linux packaging dependencies
-        if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y rpm fakeroot dpkg
       - name: Install dependencies
         working-directory: desktop
         run: npm install
-      - name: Build desktop installer
+      - name: Build
         working-directory: desktop
         run: npm run ${{ matrix.script }}
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
       - uses: actions/upload-artifact@v4
         with:
-          name: desktop-${{ runner.os }}
-          path: desktop/release/*
+          name: ${{ matrix.artifact }}
+          path: desktop/release/${{ matrix.pattern }}
           if-no-files-found: error
-          retention-days: 7
 
-  android-build:
+  android:
     runs-on: ubuntu-latest
+    # A problem in the Android build never blocks the desktop release.
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: 17
       - uses: gradle/actions/setup-gradle@v4
-      - name: Build Android debug APK
-        working-directory: mobile/android
-        run: gradle assembleDebug
-      - name: Name APK for website download
-        run: cp mobile/android/app/build/outputs/apk/debug/app-debug.apk Shadnox-Android.apk
+        with:
+          gradle-version: "8.9"
+      - name: Build APK
+        working-directory: android
+        run: gradle --no-daemon :app:assembleRelease
+      - name: Name the APK
+        run: cp android/app/build/outputs/apk/release/app-release.apk Shadnox-Android.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Shadnox-Android.apk
+          name: android
           path: Shadnox-Android.apk
           if-no-files-found: error
-          retention-days: 7
 
   release:
-    needs: [desktop-build, android-build]
+    needs: [desktop, android]
+    if: ${{ always() && needs.desktop.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
         with:
           path: dist
           merge-multiple: true
-      - name: Verify release files
-        run: |
-          echo "Files to publish:"
-          find dist -maxdepth 2 -type f -print
-          test -f "dist/Shadnox-Windows-Setup.exe"
-          test -f "dist/Shadnox-macOS-Universal.dmg"
-          test -f "dist/Shadnox-Android.apk"
-          find dist -maxdepth 1 -type f -printf '%f\n' | sort
-      - name: Publish or update release assets
+      - name: List files
+        run: ls -la dist
+      - name: Publish release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
-          TAG: build-${{ github.run_number }}
         run: |
-          set -euo pipefail
-          if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
-            echo "Release $TAG already exists; refreshing its assets."
-          else
-            gh release create "$TAG" \
-              --repo "$REPO" \
-              --title "Shadnox build ${{ github.run_number }}" \
-              --notes "Automated desktop installers and Android APK. The Android APK is a debug-signed testing build. On iPhone, use Safari's Share menu and Add to Home Screen to install the website experience." \
-              --latest
-          fi
-          gh release upload "$TAG" dist/* --repo "$REPO" --clobber
-          gh release edit "$TAG" --repo "$REPO" --latest
+          gh release create "build-${{ github.run_number }}" dist/* \
+            --repo "${{ github.repository }}" \
+            --title "Shadnox build ${{ github.run_number }}" \
+            --notes "Automated build: Windows, macOS, Linux and Android" \
+            --latest

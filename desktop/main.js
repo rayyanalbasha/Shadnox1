@@ -18,7 +18,7 @@ const customize = require("./customize");
 // Dark title bar to match the app, and a stable Windows identity so the
 // taskbar groups the app under the Shadnox icon instead of the Electron one.
 nativeTheme.themeSource = "dark";
-if (process.platform === "win32") app.setAppUserModelId("com.shadnox.app");
+if (process.platform === "win32") app.setAppUserModelId("com.privatescreen.app");
 
 let mainWindow = null;
 let tray = null;
@@ -28,6 +28,23 @@ let overlayEnabled = false;
 let strength = 45;
 
 const isMac = process.platform === "darwin";
+
+// Linux: see-through windows need these switches, and the AppImage cannot use
+// Chromium's setuid sandbox, so it runs without it (the app only loads its own local pages).
+if (process.platform === "linux") {
+  app.commandLine.appendSwitch("enable-transparent-visuals");
+  app.commandLine.appendSwitch("disable-gpu");
+  if (process.env.APPIMAGE) app.commandLine.appendSwitch("no-sandbox");
+}
+
+// On Windows the dark layer is a plain black window whose opacity is set by the OS.
+// That works on every GPU/driver, unlike a transparent web page which can silently
+// fail to draw. Other systems keep the transparent-page overlay.
+const solidOverlay = process.platform === "win32";
+function applyOverlayLook(win) {
+  if (!solidOverlay || win.isDestroyed()) return;
+  win.setOpacity(Math.max(0, Math.min(90, strength)) / 100);
+}
 const DEFAULT_HOTKEY = "CommandOrControl+Shift+P";
 let hotkey = DEFAULT_HOTKEY;
 let runInBackground = true;
@@ -104,6 +121,7 @@ function broadcastState() {
 
   for (const win of overlayWindows.values()) {
     if (!win.isDestroyed()) {
+      applyOverlayLook(win);
       win.webContents.send("overlay-update", state);
     }
   }
@@ -113,7 +131,9 @@ function updateOverlayWindows() {
   for (const win of overlayWindows.values()) {
     if (!win.isDestroyed()) {
       if (overlayEnabled) {
+        applyOverlayLook(win);
         win.showInactive();
+        win.setAlwaysOnTop(true, "screen-saver");
       } else {
         win.hide();
       }
@@ -141,8 +161,8 @@ function createOverlay(display) {
     width: display.bounds.width,
     height: display.bounds.height,
     frame: false,
-    transparent: true,
-    backgroundColor: "#00000000",
+    transparent: !solidOverlay,
+    backgroundColor: solidOverlay ? "#000000" : "#00000000",
     hasShadow: false,
     resizable: false,
     movable: false,
@@ -167,13 +187,21 @@ function createOverlay(display) {
 
   overlayWindows.set(display.id, overlay);
 
+  // Windows can place a window slightly off on mixed-DPI setups, so set the bounds again.
+  overlay.setBounds(display.bounds);
+  applyOverlayLook(overlay);
+
   overlay.loadFile(path.join(__dirname, "overlay.html")).then(() => {
     overlay.webContents.send("overlay-update", {
       enabled: overlayEnabled,
       strength
     });
+    applyOverlayLook(overlay);
 
-    if (overlayEnabled) overlay.showInactive();
+    if (overlayEnabled) {
+      overlay.showInactive();
+      overlay.setAlwaysOnTop(true, "screen-saver");
+    }
   });
 
   overlay.on("closed", () => {
@@ -187,7 +215,7 @@ function syncDisplays() {
 
   for (const [id, win] of overlayWindows.entries()) {
     if (!activeIds.has(id)) {
-      if (!win.isDestroyed()) win.close();
+      if (!win.isDestroyed()) { win.setClosable(true); win.destroy(); }
       overlayWindows.delete(id);
     }
   }

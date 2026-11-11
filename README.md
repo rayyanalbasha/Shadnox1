@@ -1,23 +1,20 @@
-# Shadnox
+# Shadnox project
 
-- `website/` — static marketing/download website (Render publish directory: `website`).
-- `desktop/` — Electron desktop app for Windows, macOS, and Linux.
-- `mobile/` — mobile implementation notes and platform limitations.
-- `.github/workflows/release.yml` — CI builds Windows, macOS, and Linux artifacts.
+website/   -> the Render website (Publish Directory = website)
+desktop/   -> Electron app for Windows, macOS and Linux
+  build/   -> app icons + Windows setup artwork + macOS disk image artwork
+android/   -> Android app (Kotlin): Private Screen overlay + App Shortcuts (custom name/icon)
+.github/workflows/release.yml -> builds Windows, macOS, Linux and Android and publishes ONE release
 
-## Build desktop installers
-Requires Node.js 22+. Run `cd desktop && npm install`, then one of:
+Downloads (website links use "releases/latest"):
+  PrivateScreen-Windows-Setup.exe, PrivateScreen-macOS-Universal.dmg,
+  PrivateScreen-Linux.AppImage, PrivateScreen-Linux.deb, Shadnox-Android.apk
 
-- `npm run build:win` — Windows setup EXE (build on Windows or CI).
-- `npm run build:mac` — universal macOS DMG (build on macOS or CI).
-- `npm run build:linux` — Linux AppImage and Debian package.
+IMPORTANT: keep your existing desktop/scripts/ folder (wallpaper.ps1, lockscreen.ps1,
+taskbar-color.ps1, taskbar-transparent.ps1). It is not part of this zip.
 
-The website's release links use the Shadnox artifact names. GitHub Actions creates the platform builds; signing/notarization credentials are not included.
+Android signing: android/app/shadnox.keystore signs every APK so new builds update old ones.
+The passwords are in android/app/build.gradle.kts. Anyone with the repo could sign an app with
+this key, which is fine for hobby sideloading but not for a store release.
 
-## Mobile app status
-See `mobile/README.md`. Android supports app shortcuts with launcher-dependent behavior; iOS does not allow third-party apps to enumerate all installed apps or create arbitrary home-screen aliases that launch other apps. The mobile UI should not claim to provide a system-wide overlay.
-
-
-## Publishing downloads
-
-The website links must exactly match the asset filenames attached to the latest GitHub Release. The release workflow publishes `Shadnox-Windows-Setup.exe`, `Shadnox-macOS-Universal.dmg`, Linux AppImage/DEB files, and `Shadnox-Android.apk`. After pushing changes, check the GitHub Actions workflow and confirm all assets appear in the latest release before testing website downloads. iPhone installation is the PWA instructions on the website, not a native IPA download.
+iPhone: not included. iOS cannot draw over other apps, list installed apps, or install from a website.
